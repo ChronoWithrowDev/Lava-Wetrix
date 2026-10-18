@@ -1,0 +1,23 @@
+appId: com.lavawetrix.game
+productName: LAVA WETRIX
+directories:
+  output: release
+files:
+  - dist/**/*
+  - electron/main.cjs
+  - package.json
+asar: true
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: LAVA WETRIX

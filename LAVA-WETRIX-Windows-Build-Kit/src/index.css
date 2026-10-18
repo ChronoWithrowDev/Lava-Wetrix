@@ -1,0 +1,93 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: #050309;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: rgba(255, 110, 0, 0.4);
+}
+
+/* thin scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 140, 40, 0.4);
+}
+
+/* rising embers */
+@keyframes ember-rise {
+  0% {
+    transform: translateY(10vh) scale(1);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-105vh) translateX(24px) scale(0.4);
+    opacity: 0;
+  }
+}
+.ember {
+  position: absolute;
+  bottom: -2vh;
+  border-radius: 99px;
+  background: radial-gradient(circle, #ffd9a0 0%, #ff8c2e 45%, transparent 70%);
+  box-shadow: 0 0 8px rgba(255, 140, 40, 0.8);
+  animation: ember-rise linear infinite;
+}
+
+/* toast entrance */
+@keyframes toast-in {
+  0% {
+    transform: translateY(-14px) scale(0.92);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+.toast-in {
+  animation: toast-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+canvas {
+  touch-action: none;
+}
