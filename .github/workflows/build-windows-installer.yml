@@ -1,3 +1,4 @@
+
 name: Build LAVA WETRIX Windows Launcher
 
 on:
@@ -10,7 +11,7 @@ permissions:
 
 jobs:
   build-windows:
-    name: Build Windows installers
+    name: Build Windows Installers
     runs-on: windows-latest
 
     steps:
@@ -22,11 +23,48 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
-        run: npm install
+      - name: Find game folder
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Filter package.json -Recurse -File |
+            Where-Object {
+              $_.FullName -notmatch '[\\/](node_modules|\.git)[\\/]'
+            }
 
-      - name: Build installer and portable app
-        run: npm run dist:win
+          $game = $null
+
+          foreach ($file in $files) {
+            try {
+              $pkg = Get-Content $file.FullName -Raw | ConvertFrom-Json
+              if ($pkg.scripts -and $pkg.scripts.'dist:win') {
+                $game = $file.DirectoryName
+                break
+              }
+            } catch {}
+          }
+
+          if (-not $game) {
+            throw "Could not find the LAVA WETRIX package.json with a dist:win script."
+          }
+
+          "GAME_DIR=$game" |
+            Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+          Write-Host "Found LAVA WETRIX at: $game"
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          Set-Location $env:GAME_DIR
+          npm install
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build Windows installer and portable app
+        shell: pwsh
+        run: |
+          Set-Location $env:GAME_DIR
+          npm run dist:win
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
 
@@ -34,6 +72,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: LAVA-WETRIX-Windows-Installers
-          path: release/*.exe
+          path: '**/release/*.exe'
           if-no-files-found: error
           retention-days: 30
