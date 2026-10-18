@@ -1,0 +1,39 @@
+name: Build LAVA WETRIX Windows Launcher
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Build Windows installers
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out game
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build installer and portable app
+        run: npm run dist:win
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Upload Windows files
+        uses: actions/upload-artifact@v7
+        with:
+          name: LAVA-WETRIX-Windows-Installers
+          path: release/*.exe
+          if-no-files-found: error
+          retention-days: 30
